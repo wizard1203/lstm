@@ -54,8 +54,8 @@ def run_epoch(model, data_loader, is_train=False, lr=0.1):
     else:
         model.eval()
     for step, (x, y) in enumerate(data_loader):
-        print(x)
-        print(type(x))
+        #print(x)
+        #print(type(x))
         # inputs = Variable(torch.from_numpy(x.astype(np.int64)).transpose(0, 1).contiguous()).cuda()
         inputs = Variable(x.transpose(0, 1).contiguous()).cuda()
         model.zero_grad()
