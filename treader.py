@@ -143,16 +143,16 @@ class TrainDataset(Dataset):
         # y = self.data[:, idx * self.num_steps + 1:(idx + 1) * self.num_steps + 1]
         
         batchindex = self.batch_size * idx
-        print("idx:%d , batch_len:%d, data_len:%d == ", idx, self.batch_len, self.data_len)
-        print("batchindex  :  %d== ",batchindex)
+        #print("idx:%d , batch_len:%d, data_len:%d == ", idx, self.batch_len, self.data_len)
+        #print("batchindex  :  %d== ",batchindex)
         num_steps_begin_index = self.num_steps * self.loadid
-        print("num_steps_begin_index  :  %d== ",num_steps_begin_index)
+        #print("num_steps_begin_index  :  %d== ",num_steps_begin_index)
         num_steps_end_index = self.num_steps * (self.loadid + 1)
-        print("num_steps_end_index  :  %d== ",num_steps_end_index)
+        #print("num_steps_end_index  :  %d== ",num_steps_end_index)
         x = self.raw_data[batchindex + num_steps_begin_index : batchindex + num_steps_end_index]
         y = self.raw_data[batchindex + num_steps_begin_index + 1: batchindex + num_steps_end_index + 1]
-        print(x)
-        print(type(x))
+        #print(x)
+        #print(type(x))
         self.loadid += 1
         if self.loadid == self.epoch_size - 1 :
             self.loadid = 0
