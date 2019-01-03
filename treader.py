@@ -165,7 +165,7 @@ class TrainDatasetold(Dataset):
         return self.batch_len
 
 
-class TrainDataset(Dataset):
+class TrainDatasetnew1(Dataset):
     def __init__(self, raw_data, batch_size, num_steps):
         """Iterate on the raw PTB data.
         This generates batch_size pointers into the raw PTB data, and allows
@@ -232,6 +232,33 @@ class TrainDataset(Dataset):
     
     def __len__(self):
         return self.sample_len - self.batch_len
+
+
+class TrainDataset(Dataset):
+    def __init__(self, raw_data, batch_size, num_steps):
+        self.raw_data = np.array(raw_data, dtype=np.int64)
+        self.num_steps = num_steps
+        self.batch_size = batch_size
+        self.num_steps = num_steps
+        self.data_len = len(self.raw_data)
+        self.sample_len = self.data_len // self.num_steps
+        #self.batch_len = self.sample_len // self.batch_size - 1
+        
+    
+    def __getitem__(self, idx):
+        
+        num_steps_begin_index = self.num_steps * idx
+    
+        num_steps_end_index = self.num_steps * (idx + 1)
+        
+        # print("num_steps_end_index  :  %d== ",num_steps_end_index)
+        x = self.raw_data[num_steps_begin_index : num_steps_end_index]
+        y = self.raw_data[num_steps_begin_index + 1 : num_steps_end_index + 1]
+        
+        return (x, y)
+    
+    def __len__(self):
+        return self.sample_len - 1
 
 
 class TestDataset(Dataset):
