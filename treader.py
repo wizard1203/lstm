@@ -1,5 +1,6 @@
-import torch as t
-
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 import torch
 from torch.utils import data as data_
 from torch.utils.data import Dataset
@@ -8,6 +9,7 @@ import torchvision.datasets as datasets
 import torchvision.models as models
 # from data import util
 import collections
+import os
 import numpy as np
 
 
