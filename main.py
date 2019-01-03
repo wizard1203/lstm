@@ -40,8 +40,8 @@ def run_epoch(model, data, is_train=False, lr=0.1):
   costs = 0.0
   iters = 0
   for step, (x, y) in enumerate(reader.ptb_iterator(data, model.batch_size, model.num_steps)):
-    print(x)
-    print(type(x))
+    #print(x)
+    #print(type(x))
     inputs = Variable(torch.from_numpy(x.astype(np.int64)).transpose(0, 1).contiguous()).cuda()
     model.zero_grad()
     hidden = repackage_hidden(hidden)

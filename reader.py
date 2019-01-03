@@ -23,8 +23,6 @@ import collections
 import os
 
 import numpy as np
-import tensorflow as tf
-
 
 def _read_words(filename):
   #with tf.gfile.GFile(filename, "r") as f:
@@ -90,7 +88,7 @@ def ptb_iterator(raw_data, batch_size, num_steps):
   Raises:
     ValueError: if batch_size or num_steps are too high.
   """
-  print(raw_data)
+  #print(raw_data)
   raw_data = np.array(raw_data, dtype=np.int32)
 
   data_len = len(raw_data)

@@ -101,10 +101,7 @@ def ptb_iterator(raw_data, batch_size, num_steps, idx):
   y = data[:, idx*num_steps+1:(idx+1)*num_steps+1]
   return (x, y)
 
-
-
-
-class TrainDataset(Dataset):
+class TrainDatasetold(Dataset):
     def __init__(self, raw_data, batch_size, num_steps, split='train'):
         """Iterate on the raw PTB data.
         This generates batch_size pointers into the raw PTB data, and allows
@@ -145,12 +142,17 @@ class TrainDataset(Dataset):
         batchindex = self.batch_size * idx
         #print("idx:%d , batch_len:%d, data_len:%d == ", idx, self.batch_len, self.data_len)
         #print("batchindex  :  %d== ",batchindex)
+        
         num_steps_begin_index = self.num_steps * self.loadid
+        
         #print("num_steps_begin_index  :  %d== ",num_steps_begin_index)
         num_steps_end_index = self.num_steps * (self.loadid + 1)
+        
         #print("num_steps_end_index  :  %d== ",num_steps_end_index)
         x = self.raw_data[batchindex + num_steps_begin_index : batchindex + num_steps_end_index]
         y = self.raw_data[batchindex + num_steps_begin_index + 1: batchindex + num_steps_end_index + 1]
+        
+        
         #print(x)
         #print(type(x))
         self.loadid += 1
@@ -163,6 +165,73 @@ class TrainDataset(Dataset):
         return self.batch_len
 
 
+class TrainDataset(Dataset):
+    def __init__(self, raw_data, batch_size, num_steps, split='train'):
+        """Iterate on the raw PTB data.
+        This generates batch_size pointers into the raw PTB data, and allows
+        minibatch iteration along these pointers.
+        Args:
+          raw_data: one of the raw data outputs from ptb_raw_data.
+          batch_size: int, the batch size.
+          num_steps: int, the number of unrolls.
+        Yields:
+          Pairs of the batched data, each a matrix of shape [batch_size, num_steps].
+          The second element of the tuple is the same data time-shifted to the
+          right by one.
+        Raises:
+          ValueError: if batch_size or num_steps are too high.
+        """
+        # print(raw_data)
+        self.raw_data = np.array(raw_data, dtype=np.int64)
+        # print(self.raw_data.shape)
+        # print(self.raw_data.ndim)
+        # print(self.raw_data.size)
+        self.num_steps = num_steps
+        self.batch_size = batch_size
+        self.num_steps = num_steps
+        self.data_len = len(self.raw_data)
+        self.sample_len = self.data_len // self.num_steps
+        self.batch_len = self.sample_len // self.batch_size - 1
+        
+        # self.data = np.zeros([batch_size, self.batch_len], dtype=np.int64)
+        # for i in range(batch_size):
+        #     self.data[i] = self.raw_data[self.batch_len * i:self.batch_len * (i + 1)]
+        # self.loadid = 0
+        # self.epoch_size = (self.batch_len - 1) // num_steps
+        
+        if self.epoch_size == 0:
+            raise ValueError("epoch_size == 0, decrease batch_size or num_steps")
+    
+    def __getitem__(self, idx):
+        # x = self.data[:, idx * self.num_steps:(idx + 1) * self.num_steps]
+        # y = self.data[:, idx * self.num_steps + 1:(idx + 1) * self.num_steps + 1]
+
+        sample_id = idx // self.batch_size
+        batch_id= idx % self.batch_size
+        
+        batchindex = self.batch_len * self.num_steps * batch_id
+        # print("idx:%d , batch_len:%d, data_len:%d == ", idx, self.batch_len, self.data_len)
+        # print("batchindex  :  %d== ",batchindex)
+        
+        num_steps_begin_index = self.num_steps * sample_id
+
+        # print("num_steps_begin_index  :  %d== ",num_steps_begin_index)
+        num_steps_end_index = self.num_steps * (sample_id + 1)
+
+        # print("num_steps_end_index  :  %d== ",num_steps_end_index)
+        x = self.raw_data[batchindex + num_steps_begin_index: batchindex + num_steps_end_index]
+        y = self.raw_data[batchindex + num_steps_begin_index + 1: batchindex + num_steps_end_index + 1]
+        
+        # print(x)
+        # print(type(x))
+        # self.loadid += 1
+        # if self.loadid == self.epoch_size - 1:
+        #     self.loadid = 0
+        
+        return (x, y)
+    
+    def __len__(self):
+        return self.sample_len - self.batch_len
 
 
 class TestDataset(Dataset):
