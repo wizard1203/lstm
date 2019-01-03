@@ -125,6 +125,7 @@ class TrainDataset(Dataset):
         #print(self.raw_data.shape)
         #print(self.raw_data.ndim)
         #print(self.raw_data.size)
+        self.batch_size = batch_size
         self.num_steps = num_steps
         self.data_len = len(self.raw_data)
         self.batch_len = self.data_len // batch_size
