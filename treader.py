@@ -199,8 +199,8 @@ class TrainDataset(Dataset):
         # self.loadid = 0
         # self.epoch_size = (self.batch_len - 1) // num_steps
         
-        if self.epoch_size == 0:
-            raise ValueError("epoch_size == 0, decrease batch_size or num_steps")
+        # if self.epoch_size == 0:
+        #     raise ValueError("epoch_size == 0, decrease batch_size or num_steps")
     
     def __getitem__(self, idx):
         # x = self.data[:, idx * self.num_steps:(idx + 1) * self.num_steps]
