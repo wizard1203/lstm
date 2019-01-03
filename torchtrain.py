@@ -90,7 +90,7 @@ if __name__ == "__main__":
     model = lstm(embedding_dim=args.hidden_size, num_steps=args.num_steps, batch_size=args.batch_size,
                  vocab_size=vocab_size, num_layers=args.num_layers, dp_keep_prob=args.dp_keep_prob)
 
-    # epoch_size = ((len(train_data) // model.batch_size) - 1) // model.num_steps
+    epoch_size = ((len(train_data) // model.batch_size) - 1) // model.num_steps
     model.cuda()
     train_set = treader.TrainDataset(train_data, model.batch_size, model.num_steps)
     train_dataloader = data_.DataLoader(train_set, \
