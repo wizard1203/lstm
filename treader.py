@@ -131,19 +131,24 @@ class TrainDataset(Dataset):
         # self.data = np.zeros([batch_size, self.batch_len], dtype=np.int64)
         # for i in range(batch_size):
         #     self.data[i] = self.raw_data[self.batch_len * i:self.batch_len * (i + 1)]
+        self.loadid = 0
+        self.epoch_size = (self.batch_len - 1) // num_steps
     
-        epoch_size = (self.batch_len - 1) // num_steps
-    
-        if epoch_size == 0:
+        if self.epoch_size == 0:
             raise ValueError("epoch_size == 0, decrease batch_size or num_steps")
     
     def __getitem__(self, idx):
-    
         # x = self.data[:, idx * self.num_steps:(idx + 1) * self.num_steps]
         # y = self.data[:, idx * self.num_steps + 1:(idx + 1) * self.num_steps + 1]
+        batchindex = self.batch_len * idx
+        num_steps_begin_index = self.num_steps * self.loadid
+        num_steps_end_index = self.num_steps * (self.loadid + 1)
+        x = self.raw_data[batchindex + num_steps_begin_index : batchindex + num_steps_end_index]
+        y = self.raw_data[batchindex + num_steps_begin_index + 1: batchindex + num_steps_end_index + 1]
         
-        x = self.raw_data[self.batch_len * i:self.batch_len * (i + 1)]
-        y = self.raw_data[self.batch_len * i:self.batch_len * (i + 1)]
+        self.loadid += 1
+        if self.loadid == self.epoch_size - 1 :
+            self.loadid = 0
         
         return (x, y)
     
