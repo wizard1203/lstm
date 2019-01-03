@@ -125,7 +125,7 @@ class TrainDataset(Dataset):
         self.num_steps = num_steps
         self.data_len = len(self.raw_data)
         self.batch_len = self.data_len // batch_size
-        self.data = np.zeros([batch_size, self.batch_len], dtype=np.int32)
+        self.data = np.zeros([batch_size, self.batch_len], dtype=np.int64)
         for i in range(batch_size):
             self.data[i] = self.raw_data[self.batch_len * i:self.batch_len * (i + 1)]
     
