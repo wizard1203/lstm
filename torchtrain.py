@@ -88,7 +88,7 @@ if __name__ == "__main__":
 
     epoch_size = ((len(train_data) // model.batch_size) - 1) // model.num_steps
     model.cuda()
-    trainset = treader.TrainDataset(raw_data, model.batch_size, model.num_steps)
+    trainset = treader.TrainDataset(train_data, model.batch_size, model.num_steps)
     train_dataloader = data_.DataLoader(trainset, \
                                   batch_size=64, \
                                   shuffle=False, \
