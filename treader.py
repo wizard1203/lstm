@@ -62,7 +62,7 @@ def ptb_raw_data(data_path=None, prefix="ptb"):
   return train_data, valid_data, test_data, word_to_id, id_2_word
 
 
-def ptb_iterator(raw_data, batch_size, num_steps):
+def ptb_iterator(raw_data, batch_size, num_steps, idx):
   """Iterate on the raw PTB data.
   This generates batch_size pointers into the raw PTB data, and allows
   minibatch iteration along these pointers.
@@ -90,32 +90,67 @@ def ptb_iterator(raw_data, batch_size, num_steps):
 
   if epoch_size == 0:
     raise ValueError("epoch_size == 0, decrease batch_size or num_steps")
+  
+  # for i in range(epoch_size):
+  #   #   x = data[:, i*num_steps:(i+1)*num_steps]
+  #   #   y = data[:, i*num_steps+1:(i+1)*num_steps+1]
+  #   #   yield (x, y)
+  
+  x = data[:, idx*num_steps:(idx+1)*num_steps]
+  y = data[:, idx*num_steps+1:(idx+1)*num_steps+1]
+  return (x, y)
 
-  for i in range(epoch_size):
-    x = data[:, i*num_steps:(i+1)*num_steps]
-    y = data[:, i*num_steps+1:(i+1)*num_steps+1]
-    yield (x, y)
+
 
 
 class TrainDataset(Dataset):
-    def __init__(self, config, split='train'):
-        self.config = config
-        self.db = WaterDataset(config.data_dir, split=split)
-        self.tsf = Transform(config.norm_mean, config.norm_std)
+    def __init__(self, raw_data, batch_size, num_steps, config, split='train'):
+        """Iterate on the raw PTB data.
+        This generates batch_size pointers into the raw PTB data, and allows
+        minibatch iteration along these pointers.
+        Args:
+          raw_data: one of the raw data outputs from ptb_raw_data.
+          batch_size: int, the batch size.
+          num_steps: int, the number of unrolls.
+        Yields:
+          Pairs of the batched data, each a matrix of shape [batch_size, num_steps].
+          The second element of the tuple is the same data time-shifted to the
+          right by one.
+        Raises:
+          ValueError: if batch_size or num_steps are too high.
+        """
+        self.raw_data = np.array(raw_data, dtype=np.int32)
+        self.num_steps = num_steps
+        self.data_len = len(self.raw_data)
+        self.batch_len = self.data_len // batch_size
+        self.data = np.zeros([batch_size, self.batch_len], dtype=np.int32)
+        for i in range(batch_size):
+            self.data[i] = self.raw_data[self.batch_len * i:self.batch_len * (i + 1)]
+    
+        epoch_size = (self.batch_len - 1) // num_steps
+    
+        if epoch_size == 0:
+            raise ValueError("epoch_size == 0, decrease batch_size or num_steps")
+    
+        # for i in range(epoch_size):
+        #   #   x = data[:, i*num_steps:(i+1)*num_steps]
+        #   #   y = data[:, i*num_steps+1:(i+1)*num_steps+1]
+        #   #   yield (x, y)
     
     def __getitem__(self, idx):
-        label, datas = self.db.get_example(idx)
-        label = t.from_numpy(np.array(label))
-        datas = np.array(datas)
-        # datas = self.tsf(datas)
-        datas = t.from_numpy(datas)
-        datas = datas.contiguous().view(1, 96, 16)
-        # TODO: check whose stride is negative to fix this instead copy all
-        
-        return label, datas
+        # for i in range(epoch_size):
+        #   #   x = data[:, i*num_steps:(i+1)*num_steps]
+        #   #   y = data[:, i*num_steps+1:(i+1)*num_steps+1]
+        #   #   yield (x, y)
+    
+        x = self.data[:, idx * self.num_steps:(idx + 1) * self.num_steps]
+        y = self.data[:, idx * self.num_steps + 1:(idx + 1) * self.num_steps + 1]
+        return (x, y)
     
     def __len__(self):
-        return len(self.db)
+        return self.data_len
+
+
 
 
 class TestDataset(Dataset):
