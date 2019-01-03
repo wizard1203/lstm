@@ -140,7 +140,8 @@ class TrainDataset(Dataset):
     def __getitem__(self, idx):
         # x = self.data[:, idx * self.num_steps:(idx + 1) * self.num_steps]
         # y = self.data[:, idx * self.num_steps + 1:(idx + 1) * self.num_steps + 1]
-        batchindex = self.batch_len * idx
+        
+        batchindex = self.batch_size * idx
         print("idx:%d , batch_len:%d, data_len:%d == ", idx, self.batch_len, self.data_len)
         print("batchindex  :  %d== ",batchindex)
         num_steps_begin_index = self.num_steps * self.loadid
@@ -158,7 +159,7 @@ class TrainDataset(Dataset):
         return (x, y)
     
     def __len__(self):
-        return self.data_len
+        return self.batch_len
 
 
 
