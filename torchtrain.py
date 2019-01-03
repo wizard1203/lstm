@@ -92,8 +92,15 @@ if __name__ == "__main__":
 
     epoch_size = ((len(train_data) // model.batch_size) - 1) // model.num_steps
     model.cuda()
-    trainset = treader.TrainDataset(train_data, model.batch_size, model.num_steps)
-    train_dataloader = data_.DataLoader(trainset, \
+    train_set = treader.TrainDataset(train_data, model.batch_size, model.num_steps)
+    train_dataloader = data_.DataLoader(train_set, \
+                                  batch_size=args.batch_size, \
+                                  shuffle=False, \
+                                  # pin_memory=True,
+                                  num_workers=1)
+    
+    valid_set = treader.TestDataset(valid_data, model.batch_size, model.num_steps)
+    valid_dataloader = data_.DataLoader(valid_set, \
                                   batch_size=args.batch_size, \
                                   shuffle=False, \
                                   # pin_memory=True,
@@ -109,7 +116,7 @@ if __name__ == "__main__":
         lr = lr * lr_decay  # decay lr if it is time
         train_p = run_epoch(model, train_dataloader, True, lr)
         logging.info('Train perplexity at epoch {}: {:8.2f}'.format(epoch, train_p))
-        logging.info('Validation perplexity at epoch {}: {:8.2f}'.format(epoch, run_epoch(model, valid_data)))
+        logging.info('Validation perplexity at epoch {}: {:8.2f}'.format(epoch, run_epoch(model, valid_dataloader)))
     logging.info("Testing")
     model.batch_size = 1  # to make sure we process all the data
     logging.info('Test Perplexity: {:8.2f}'.format(run_epoch(model, test_data)))

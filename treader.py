@@ -235,21 +235,32 @@ class TrainDataset(Dataset):
 
 
 class TestDataset(Dataset):
-    def __init__(self, config, split='test'):
-        self.config = config
-        self.db = WaterDataset(config.data_dir, split=split)
-        self.tsf = Transform(config.norm_mean, config.norm_std)
+    def __init__(self, raw_data, batch_size, num_steps, split='train'):
+
+        self.raw_data = np.array(raw_data, dtype=np.int64)
+
+        self.num_steps = num_steps
+        self.batch_size = batch_size
+        self.num_steps = num_steps
+        self.data_len = len(self.raw_data)
+        self.sample_len = self.data_len // self.num_steps
+        self.batch_len = self.sample_len // self.batch_size - 1
+
     
     def __getitem__(self, idx):
-        label, datas = self.db.get_example(idx)
-        label = t.from_numpy(np.array(label))
-        datas = np.array(datas)
-        # datas = self.tsf(datas)
-        datas = t.from_numpy(datas)
-        datas = datas.contiguous().view(1, 96, 16)
-        # TODO: check whose stride is negative to fix this instead copy all
+        sample_id = idx // self.batch_size
+        batch_id = idx % self.batch_size
         
-        return label, datas
+        batchindex = self.batch_len * self.num_steps * batch_id
+        
+        num_steps_begin_index = self.num_steps * sample_id
+        num_steps_end_index = self.num_steps * (sample_id + 1)
+        
+        # print("num_steps_end_index  :  %d== ",num_steps_end_index)
+        x = self.raw_data[batchindex + num_steps_begin_index: batchindex + num_steps_end_index]
+        y = self.raw_data[batchindex + num_steps_begin_index + 1: batchindex + num_steps_end_index + 1]
+        
+        return (x, y)
     
     def __len__(self):
-        return len(self.db)
+        return self.sample_len - self.batch_len
