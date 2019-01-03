@@ -20,7 +20,7 @@ parser.add_argument('--data', type=str, default='data')
 parser.add_argument('--hidden_size', type=int, default=1500)
 parser.add_argument('--num_steps', type=int, default=35)
 parser.add_argument('--num_layers', type=int, default=2)
-parser.add_argument('--batch_size', type=int, default=20)
+parser.add_argument('--batch_size', type=int, default=13)
 parser.add_argument('--num_epochs', type=int, default=40)
 parser.add_argument('--dp_keep_prob', type=float, default=0.35)
 parser.add_argument('--inital_lr', type=float, default=1.0)
@@ -90,7 +90,7 @@ if __name__ == "__main__":
     model = lstm(embedding_dim=args.hidden_size, num_steps=args.num_steps, batch_size=args.batch_size,
                  vocab_size=vocab_size, num_layers=args.num_layers, dp_keep_prob=args.dp_keep_prob)
 
-    epoch_size = ((len(train_data) // model.batch_size) - 1) // model.num_steps
+    # epoch_size = ((len(train_data) // model.batch_size) - 1) // model.num_steps
     model.cuda()
     train_set = treader.TrainDataset(train_data, model.batch_size, model.num_steps)
     train_dataloader = data_.DataLoader(train_set, \
