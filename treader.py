@@ -104,7 +104,7 @@ def ptb_iterator(raw_data, batch_size, num_steps, idx):
 
 
 class TrainDataset(Dataset):
-    def __init__(self, raw_data, batch_size, num_steps, config, split='train'):
+    def __init__(self, raw_data, batch_size, num_steps, split='train'):
         """Iterate on the raw PTB data.
         This generates batch_size pointers into the raw PTB data, and allows
         minibatch iteration along these pointers.
