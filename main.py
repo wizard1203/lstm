@@ -7,7 +7,7 @@ import torch.nn
 from torch.autograd import Variable
 import torch.nn as nn
 from lm import repackage_hidden,lstm
-import treader
+import reader
 import numpy as np
 import logging
 logging.getLogger().setLevel(logging.DEBUG)
@@ -39,7 +39,7 @@ def run_epoch(model, data, is_train=False, lr=0.1):
   hidden = model.init_hidden()
   costs = 0.0
   iters = 0
-  for step, (x, y) in enumerate(treader.ptb_iterator(data, model.batch_size, model.num_steps)):
+  for step, (x, y) in enumerate(reader.ptb_iterator(data, model.batch_size, model.num_steps)):
     inputs = Variable(torch.from_numpy(x.astype(np.int64)).transpose(0, 1).contiguous()).cuda()
     model.zero_grad()
     hidden = repackage_hidden(hidden)
@@ -76,7 +76,7 @@ def initLogging(logFilename):
 initLogging('test.log')
 
 if __name__ == "__main__":
-  raw_data = treader.ptb_raw_data(data_path=args.data)
+  raw_data = reader.ptb_raw_data(data_path=args.data)
   train_data, valid_data, test_data, word_to_id, id_2_word = raw_data
   vocab_size = len(word_to_id)
   print('Vocabluary size: {}'.format(vocab_size))
