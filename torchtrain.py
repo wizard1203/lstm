@@ -54,13 +54,15 @@ def run_epoch(model, data_loader, is_train=False, lr=0.1):
     else:
         model.eval()
     for step, (x, y) in enumerate(data_loader):
-        #inputs = Variable(torch.from_numpy(x.astype(np.int64)).transpose(0, 1).contiguous()).cuda()
-        inputs = Variable(torch.from_numpy(x).transpose(0, 1).contiguous()).cuda()
+        print(x)
+        print(type(x))
+        inputs = Variable(torch.from_numpy(x.astype(np.int64)).transpose(0, 1).contiguous()).cuda()
+
         model.zero_grad()
         hidden = repackage_hidden(hidden)
         outputs, hidden = model(inputs, hidden)
-        #targets = Variable(torch.from_numpy(y.astype(np.int64)).transpose(0, 1).contiguous()).cuda()
-        targets = Variable(torch.from_numpy(y).transpose(0, 1).contiguous()).cuda()
+        targets = Variable(torch.from_numpy(y.astype(np.int64)).transpose(0, 1).contiguous()).cuda()
+
         tt = torch.squeeze(targets.view(-1, model.batch_size * model.num_steps))
         loss = criterion(outputs.view(-1, model.vocab_size), tt)
         costs += loss.data[0] * model.num_steps
