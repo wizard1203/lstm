@@ -141,7 +141,7 @@ class TrainDataset(Dataset):
         # x = self.data[:, idx * self.num_steps:(idx + 1) * self.num_steps]
         # y = self.data[:, idx * self.num_steps + 1:(idx + 1) * self.num_steps + 1]
         batchindex = self.batch_len * idx
-        print("idx  :  %d== ", idx)
+        print("idx:%d , batch_len:%d, data_len:%d == ", idx, self.batch_len, self.data_len)
         print("batchindex  :  %d== ",batchindex)
         num_steps_begin_index = self.num_steps * self.loadid
         print("num_steps_begin_index  :  %d== ",num_steps_begin_index)
