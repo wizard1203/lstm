@@ -77,6 +77,7 @@ def ptb_iterator(raw_data, batch_size, num_steps, idx):
   Raises:
     ValueError: if batch_size or num_steps are too high.
   """
+  print(raw_data)
   raw_data = np.array(raw_data, dtype=np.int32)
 
   data_len = len(raw_data)
@@ -119,6 +120,7 @@ class TrainDataset(Dataset):
         Raises:
           ValueError: if batch_size or num_steps are too high.
         """
+        print(raw_data)
         self.raw_data = np.array(raw_data, dtype=np.int32)
         self.num_steps = num_steps
         self.data_len = len(self.raw_data)
