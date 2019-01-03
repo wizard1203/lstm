@@ -141,8 +141,11 @@ class TrainDataset(Dataset):
         # x = self.data[:, idx * self.num_steps:(idx + 1) * self.num_steps]
         # y = self.data[:, idx * self.num_steps + 1:(idx + 1) * self.num_steps + 1]
         batchindex = self.batch_len * idx
+        print("batchindex  :  %d== ",batchindex)
         num_steps_begin_index = self.num_steps * self.loadid
+        print("num_steps_begin_index  :  %d== ",num_steps_begin_index)
         num_steps_end_index = self.num_steps * (self.loadid + 1)
+        print("num_steps_end_index  :  %d== ",num_steps_end_index)
         x = self.raw_data[batchindex + num_steps_begin_index : batchindex + num_steps_end_index]
         y = self.raw_data[batchindex + num_steps_begin_index + 1: batchindex + num_steps_end_index + 1]
         print(x)
