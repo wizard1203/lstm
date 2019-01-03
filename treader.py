@@ -121,32 +121,30 @@ class TrainDataset(Dataset):
           ValueError: if batch_size or num_steps are too high.
         """
         print(raw_data)
-        self.raw_data = np.array(raw_data, dtype=np.int32)
+        self.raw_data = np.array(raw_data, dtype=np.int64)
+        print(self.raw_data.shape)
+        print(self.raw_data.ndim)
+        print(self.raw_data.size)
         self.num_steps = num_steps
         self.data_len = len(self.raw_data)
         self.batch_len = self.data_len // batch_size
-        self.data = np.zeros([batch_size, self.batch_len], dtype=np.int64)
-        for i in range(batch_size):
-            self.data[i] = self.raw_data[self.batch_len * i:self.batch_len * (i + 1)]
+        # self.data = np.zeros([batch_size, self.batch_len], dtype=np.int64)
+        # for i in range(batch_size):
+        #     self.data[i] = self.raw_data[self.batch_len * i:self.batch_len * (i + 1)]
     
         epoch_size = (self.batch_len - 1) // num_steps
     
         if epoch_size == 0:
             raise ValueError("epoch_size == 0, decrease batch_size or num_steps")
     
-        # for i in range(epoch_size):
-        #   #   x = data[:, i*num_steps:(i+1)*num_steps]
-        #   #   y = data[:, i*num_steps+1:(i+1)*num_steps+1]
-        #   #   yield (x, y)
-    
     def __getitem__(self, idx):
-        # for i in range(epoch_size):
-        #   #   x = data[:, i*num_steps:(i+1)*num_steps]
-        #   #   y = data[:, i*num_steps+1:(i+1)*num_steps+1]
-        #   #   yield (x, y)
     
-        x = self.data[:, idx * self.num_steps:(idx + 1) * self.num_steps]
-        y = self.data[:, idx * self.num_steps + 1:(idx + 1) * self.num_steps + 1]
+        # x = self.data[:, idx * self.num_steps:(idx + 1) * self.num_steps]
+        # y = self.data[:, idx * self.num_steps + 1:(idx + 1) * self.num_steps + 1]
+        
+        x = self.raw_data[self.batch_len * i:self.batch_len * (i + 1)]
+        y = self.raw_data[self.batch_len * i:self.batch_len * (i + 1)]
+        
         return (x, y)
     
     def __len__(self):
