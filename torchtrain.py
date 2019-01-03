@@ -94,10 +94,10 @@ if __name__ == "__main__":
     model.cuda()
     trainset = treader.TrainDataset(train_data, model.batch_size, model.num_steps)
     train_dataloader = data_.DataLoader(trainset, \
-                                  batch_size=64, \
+                                  batch_size=args.batch_size, \
                                   shuffle=False, \
                                   # pin_memory=True,
-                                  num_workers=4)
+                                  num_workers=1)
     
     lr = args.inital_lr
     lr_decay_base = 1 / 1.15
