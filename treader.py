@@ -120,11 +120,11 @@ class TrainDataset(Dataset):
         Raises:
           ValueError: if batch_size or num_steps are too high.
         """
-        print(raw_data)
+        #print(raw_data)
         self.raw_data = np.array(raw_data, dtype=np.int64)
-        print(self.raw_data.shape)
-        print(self.raw_data.ndim)
-        print(self.raw_data.size)
+        #print(self.raw_data.shape)
+        #print(self.raw_data.ndim)
+        #print(self.raw_data.size)
         self.num_steps = num_steps
         self.data_len = len(self.raw_data)
         self.batch_len = self.data_len // batch_size
@@ -145,7 +145,8 @@ class TrainDataset(Dataset):
         num_steps_end_index = self.num_steps * (self.loadid + 1)
         x = self.raw_data[batchindex + num_steps_begin_index : batchindex + num_steps_end_index]
         y = self.raw_data[batchindex + num_steps_begin_index + 1: batchindex + num_steps_end_index + 1]
-        
+        print(x)
+        print(type(x))
         self.loadid += 1
         if self.loadid == self.epoch_size - 1 :
             self.loadid = 0
