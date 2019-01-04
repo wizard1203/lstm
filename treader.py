@@ -258,7 +258,7 @@ class TrainDataset(Dataset):
         return (x, y)
     
     def __len__(self):
-        return self.sample_len - 1
+        return self.sample_len - self.sample_len % self.batch_size
 
 
 class TestDatasetnew1(Dataset):

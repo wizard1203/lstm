@@ -43,7 +43,7 @@ def initLogging(logFilename):
     console.setFormatter(formatter)
     logging.getLogger('').addHandler(console)
 
-def run_epoch(model, data_loader, is_train=False, lr=0.1):
+def run_epoch(model, data_loader, batch_size, is_train=False, lr=0.1):
     """Runs the model on the given data."""
     hidden = model.init_hidden()
     start_time = time.time()
@@ -57,6 +57,8 @@ def run_epoch(model, data_loader, is_train=False, lr=0.1):
         #print(x)
         #print(type(x))
         # inputs = Variable(torch.from_numpy(x.astype(np.int64)).transpose(0, 1).contiguous()).cuda()
+        # if list(x.size())[0] != batch_size:
+        #     break
         inputs = Variable(x.transpose(0, 1).contiguous()).cuda()
         model.zero_grad()
         hidden = repackage_hidden(hidden)
@@ -114,12 +116,12 @@ if __name__ == "__main__":
     for epoch in range(args.num_epochs):
         lr_decay = lr_decay_base ** max(epoch - m_flat_lr, 0)
         lr = lr * lr_decay  # decay lr if it is time
-        train_p = run_epoch(model, train_dataloader, True, lr)
+        train_p = run_epoch(model, train_dataloader, args.batch_size, True, lr)
         logging.info('Train perplexity at epoch {}: {:8.2f}'.format(epoch, train_p))
-        logging.info('Validation perplexity at epoch {}: {:8.2f}'.format(epoch, run_epoch(model, valid_dataloader)))
+        logging.info('Validation perplexity at epoch {}: {:8.2f}'.format(epoch, run_epoch(model, valid_dataloader, args.batch_size)))
     logging.info("Testing")
     model.batch_size = 1  # to make sure we process all the data
-    logging.info('Test Perplexity: {:8.2f}'.format(run_epoch(model, test_data)))
+    logging.info('Test Perplexity: {:8.2f}'.format(run_epoch(model, test_data, args.batch_size)))
     with open(args.save, 'wb') as f:
         torch.save(model, f)
     logging.info("Done")
